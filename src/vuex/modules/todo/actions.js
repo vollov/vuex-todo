@@ -1,39 +1,35 @@
 const axios = require('axios')
-
+const _ = require('underscore')
 
 const actions = {
-  getTodo ({commit}, todo) {
-    console.log('GET_TODO action called')
-    commit('GET_TODO', todo)
+  // set selectedTodo
+  setTodo ({commit}, todo) {
+    console.log('SET_TODO action called')
+    commit('SET_TODO', todo)
   },
   loadTodos ({commit}) {
     axios.get('/api/todo/')
     .then(res => {
       // console.log(res.data[0].title)
-      commit('SET_TODOS', res.data)
+      commit('LOAD_TODOS', res.data)
     })
     .catch(err => {
       console.log('SET_TODOS err=%s', err)
     })
   },
-  addTodo ({commit, state}) {
-    let value = state.newTodo && state.newTodo.trim()
-    console.log('action add todo called value=%s', value)
-    if (!value) {
-      // do not add empty todos
-      return
+  // create a new todo
+  saveTodo ({commit}, todo) {
+    // todo object is not empty
+    if(! _.isEmpty(todo)){
+      axios.post('/api/todo/', todo)
+      .then(res => {
+        console.log('ADD_TODO res=%j, todo=%j', res.data, todo)
+        commit('ADD_TODO', res.data)
+      })
+      .catch(err => {
+        console.log('ADD_TODO err=%s', err)
+      })
     }
-    const todo = {
-      title: value
-    }
-    axios.post('/api/todo/', todo)
-    .then(res => {
-      console.log('ADD_TODO res=%j, todo=%j', res.data, todo)
-      commit('ADD_TODO', res.data)
-    })
-    .catch(err => {
-      console.log('ADD_TODO err=%s', err)
-    })
   },
   completeTodo ({commit}, todo) {
     commit('COMPLETE_TODO', todo)
@@ -59,12 +55,11 @@ const actions = {
       console.log('REMOVE_TODO err=%s', err)
     })
   },
-  editTodo ({commit}, todo) {
-    commit('EDIT_TODO', todo)
-
+  updateTodo ({commit}, todo) {
     axios.put('/api/todo/' + todo.id  + '/', todo)
     .then(res => {
-      console.log('EDIT_TODO updated')
+      console.log('EDIT_TODO updated todo=%j', res.data)
+      commit('EDIT_TODO', todo)
     })
     .catch(err => {
       console.log('EDIT_TODO err=%s', err)

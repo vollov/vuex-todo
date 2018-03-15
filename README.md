@@ -34,10 +34,85 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 
   <Table stripe ref="selection" :columns="columns1" :data="todos" @on-select-all="handleSelectAll()" @on-select="handleSelect"></Table>
 
+@on-select="handleSelect" @on-current-change="selectRow"
+
   handleSelectAll(selection) {
     console.log('all selected status=>%j', selection)
     //this.$refs.selection.selectAll(status);
   },
+
+Edit Todo
+  ==================
+
+  <template>
+  <Content :style="{padding: '16px 16px 0px 16px'}">
+
+    <Form :model="selectedTodo" :rules="ruleValidate" inline>
+      <FormItem>
+        <Checkbox v-model="selectedTodo.complete"></Checkbox>
+      </FormItem>
+      <FormItem>
+        <Input v-model="selectedTodo.title" placeholder="Enter todo title..." clearable></Input>
+      </FormItem>
+      <FormItem>
+        <Button type="primary" @click="saveTodo()">Update</Button>
+      </FormItem>
+    </Form>
+  </Content>
+  </template>
+  <script>
+  import { mapGetters, mapActions } from 'vuex'
+
+  export default {
+    data() {
+      return {
+        todoForm: {
+          title: '',
+          complete: false
+        },
+        ruleValidate: {
+          title: [
+            { required: true, message: 'The title cannot be empty', trigger: 'blur' }
+          ]
+        }
+      }
+    },
+    methods: {
+      ...mapActions([
+        'saveTodo',
+        'setTodo',
+        'clearTodo'
+      ]),
+      saveTodo() {
+        console.log('save todo called, id=%s', this.selectedTodo.id)
+        // check create or update
+        if (!this.selectedTodo.title) {
+          return
+        }
+
+        this.setTodo(this.selectedTodo)
+        if (!this.selectedTodo.id) {
+          // this.saveTodo()
+          console.log('create new')
+        } else {
+          console.log('update todo')
+        }
+        // this.clearTodo()
+      }
+    },
+    computed: {
+      ...mapGetters([
+        'selectedTodo'
+      ])
+      // title: {
+      //   get() { return this.selectedTodo },
+      //   set(value) { this.setTodo(value) }
+      // }
+    }
+  }
+  </script>
+
+  ==================
 data() {
   return {
     columns1: [{

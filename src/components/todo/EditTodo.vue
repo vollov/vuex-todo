@@ -1,15 +1,15 @@
 <template>
 <Content :style="{padding: '16px 16px 0px 16px'}">
 
-  <Form :model="todoForm" inline>
+  <Form :model="todoForm" :rules="ruleValidate" inline>
     <FormItem>
       <Checkbox v-model="todoForm.complete"></Checkbox>
     </FormItem>
     <FormItem>
-      <Input v-model="todoForm.title" @on-change="getTodoX" placeholder="Enter todo title..." clearable></Input>
+      <Input v-model="todoForm.title" placeholder="Enter todo title..." clearable></Input>
     </FormItem>
     <FormItem>
-      <Button type="primary" @click="saveTodo()">Save</Button>
+      <Button type="primary" @click="update()">Update</Button>
     </FormItem>
   </Form>
 </Content>
@@ -23,33 +23,57 @@ export default {
       todoForm: {
         title: '',
         complete: false
+      },
+      ruleValidate: {
+        title: [
+          { required: true, message: 'The title cannot be empty', trigger: 'blur' }
+        ]
       }
     }
   },
+  created() {
+    this.loadTodo()
+  },
   methods: {
     ...mapActions([
-      'addTodo',
-      'getTodo',
+      'updateTodo',
+      'setTodo',
       'clearTodo'
     ]),
-    getTodoX() {
-      console.log('get todo x called, newTodo=%s', this.todoForm.title)
-      this.getTodo(this.todoForm.title)
+    loadTodo() {
+      // load selectedTodo from vuex
+      console.log('selected todo id=%s', this.selectedTodo.id)
+      this.todoForm.title = this.selectedTodo.title
+      this.todoForm.complete = this.selectedTodo.complete
     },
-    saveTodo() {
-      console.log('save todo called')
-      this.addTodo()
+    update() {
+      // update selectedTodo
+      // call action to update
+      console.log('update todo called, title=%s', this.selectedTodo.title)
+      console.log('update todo')
+      this.selectedTodo.title = this.todoForm.title
+      this.selectedTodo.complete = this.todoForm.complete
+      this.updateTodo(this.selectedTodo)
       this.clearTodo()
+      this.$router.push({ name: 'home' })
+      // this.setTodo(this.selectedTodo)
+      // if (!this.selectedTodo.id) {
+      //   // this.saveTodo()
+      //   console.log('create new')
+      // } else {
+      //   console.log('update todo')
+      // }
+      // this.clearTodo()
     }
   },
   computed: {
     ...mapGetters([
-      'newTodo'
-    ]),
-    title: {
-      get() { return this.newTodo },
-      set(value) { this.getTodo(value) }
-    }
+      'selectedTodo'
+    ])
+    // title: {
+    //   get() { return this.selectedTodo },
+    //   set(value) { this.setTodo(value) }
+    // }
   }
 }
 </script>

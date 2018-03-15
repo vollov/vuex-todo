@@ -3,11 +3,11 @@ import actions from './actions'
 
 const state = {
   todos: [],
-  newTodo: ''
+  selectedTodo: '' // selected todo or a new todo
 }
 
 const getters = {
-  newTodo: state => state.newTodo,
+  selectedTodo: state => state.selectedTodo,
   todos: state => state.todos,
   completedTodos: state => state.todos.filter((todo) => { return todo.completed })
 }

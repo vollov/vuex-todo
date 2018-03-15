@@ -1,14 +1,20 @@
 <template>
 <div>
   <Table highlight-row ref="selection" :columns="columns1" :data="todos"></Table>
-
+  <Modal v-model="modal1" title="Common Modal dialog box title">
+    <EditTodo></EditTodo>
+  </Modal>
 </div>
 </template>
 
 <script>
 import { mapGetters, mapActions, mapState } from 'vuex'
+import EditTodo from '@/components/todo/EditTodo'
 
 export default {
+  components: {
+    EditTodo
+  },
   data() {
     return {
       modal1: false,
@@ -100,10 +106,7 @@ export default {
       console.log('edit todo=%s, id=%s', todo.title, todo.id)
       // set selected todo to this todo
       this.setTodo(todo)
-
       // navigate to edit todo
-      this.$router.push({ name: 'editTodo' })
-
       // this.modal1 = true
       // this.todoForm.title = todo.title
       // this.todoForm.complete = todo.complete

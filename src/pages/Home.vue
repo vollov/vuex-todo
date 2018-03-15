@@ -1,12 +1,12 @@
 <template>
 <Content>
-  <EditTodo></EditTodo>
+  <CreateTodo></CreateTodo>
   <ListTodos></ListTodos>
 </Content>
 </template>
 
 <script>
-import EditTodo from '@/components/todo/EditTodo.vue'
+import CreateTodo from '@/components/todo/CreateTodo.vue'
 import ListTodos from '@/components/todo/ListTodos.vue'
 
 export default {
@@ -17,7 +17,7 @@ export default {
     }
   },
   components: {
-    EditTodo,
+    CreateTodo,
     ListTodos
   },
   methods: {
